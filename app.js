@@ -5,7 +5,7 @@ const server = createServer()
 
 server.on("request", (request, response) => {
 
-    const path = parse(request.url)
+    const path = parse(request.url, true)
 
     if (path.pathname === "/") {
         response.writeHead(201, { "content-type": "application/json" });
@@ -15,9 +15,10 @@ server.on("request", (request, response) => {
 
     if (path.pathname === "/api") {
         response.writeHead(201, {"content-type": "application/json"})
-        response.write(JSON.stringify({ status: "Running", message: "Api calling" }));
+        response.write(JSON.stringify(path.query));
         return response.end()
     }
+
 })
 
 server.listen(8080, (err) => {
