@@ -1,51 +1,46 @@
-const { createServer } = require("http")
-const { parse } = require("url")
+// NodeJS => Framework
 
-const server = createServer()
+// NodeJS =>
+    
+// Routing => Routing issues
+// req, res => there is no middleware support
 
-let todoList = []
+// /api/3981
 
-server.on("request", (request, response) => {
+// ExpressJS =>
 
-    const { pathname, query } = parse(request.url, true)
-    const method = request.method
+// Easy Routing
+// Middleware support => authentication and authorization
+// response, request
 
-    if (pathname == "/api/todo/create" && method == "GET") {
-        const { title } = query
-        if (!title) {
-            response.writeHead(400, { "content-type": "application/json" });
-            return response.end(JSON.stringify({status: "Not OK", message: "Title is required!"}))
-        }
-        todoList.push(title)
-        response.writeHead(201, { "content-type": "application/json" });
-        return response.end(JSON.stringify({status: "OK", message: "Created!"}))
+const express = require("express")
+
+const app = express()
+
+app.use(express.json())
+
+app.get("/:id?/:uid?", (request, response) => {
+    const { id, uid } = request.params
+    const query = request.query
+    if (!id) {
+        return response.status(400).send({ message: "Id is required!" });
     }
-
-    if (pathname == "/api/todo" && method == "GET") {
-        response.writeHead(200, { "content-type": "application/json" });
-        return response.end(JSON.stringify(todoList))
+    if (!uid) {
+        return response.status(400).send({ message: "Uid is required!" });
     }
-
-    if (pathname == "/api/todo/update" && method == "GET") {
-        const { title, index } = query
-        const item = todoList[index]
-        todoList[index] = title
-        response.writeHead(201, { "content-type": "application/json" });
-        return response.end(JSON.stringify({message: `${item} updated to ${title}`}))
-    }
-
-    if (pathname == "/api/todo" && method == "DELETE") {
-        const { index } = query
-        todoList.splice(index, 1)
-        response.writeHead(200, { "content-type": "application/json" });
-        return response.end(JSON.stringify({status: "OK", message: "Task removed"}))
-    }
-
+    return response.status(200).send({...request.params, ...query});
 })
 
-server.listen(8080, (err) => {
+app.post("/api", (request, response) => {
+    const body = request.body
+    console.log(body)
+    return response.status(200).send(body)
+})
+
+app.listen(8080, (err) => {
     if (err) {
         return process.exit(1)
     }
-    console.log("Server URL: http://localhost:8080")
+    console.log("Server running: http://localhost:8080");
 })
+
