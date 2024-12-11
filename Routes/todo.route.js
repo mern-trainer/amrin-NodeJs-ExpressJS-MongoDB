@@ -1,5 +1,6 @@
 const { Router } = require("express")
 const { v4: taskId } = require("uuid")
+const loggerMid = require("../Middleware/logger")
 
 const todoRoute = Router() 
 
@@ -26,7 +27,7 @@ todoRoute.post("/todo", (request, response) => {
     })
 })
 
-todoRoute.get("/todo", (request, response) => {
+todoRoute.get("/todo", loggerMid, (request, response) => { // chaining route
     return response.status(200).send({
         message: "All List",
         status: "OK",
