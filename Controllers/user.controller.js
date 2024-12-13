@@ -94,4 +94,4 @@ const updateUser = (request, response) => {
     })
 }
 
-module.exports = {createUser, getList, deleteUser, updateUser, login}
+module.exports = { createUser, getList, deleteUser, updateUser, login }
