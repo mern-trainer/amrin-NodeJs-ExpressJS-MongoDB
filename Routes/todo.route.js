@@ -3,9 +3,9 @@ const contoller = require("../Controllers/todo.controller")
 
 const todoRoute = Router() 
 
-todoRoute.post("/todo", contoller.createTodo)
-todoRoute.get("/todo", contoller.getList)
-todoRoute.delete("/todo/:id?", contoller.deleteTodo)
-todoRoute.patch("/todo/:id?", contoller.updateTodo)
+todoRoute.post("/", contoller.createTodo)
+todoRoute.get("/", contoller.getList)
+todoRoute.delete("/:id?", contoller.deleteTodo)
+todoRoute.patch("/:id?", contoller.updateTodo)
 
 module.exports = todoRoute

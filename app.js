@@ -1,11 +1,13 @@
 const express = require("express")
 const todoRoute = require("./Routes/todo.route")
+const userRoute = require("./Routes/user.route")
 
 const app = express()
 
-app.use(express.json()) // application middleware
+app.use(express.json())
 
-app.use("/api", todoRoute)  // versions
+app.use("/api/todo", todoRoute)
+app.use("/api/users", userRoute)
 
 app.listen(8080, (err) => {
     if (err) {
