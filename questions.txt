@@ -1,2 +1,0 @@
-1. Password hashing and validation
-2. Create user and login with bcrypt

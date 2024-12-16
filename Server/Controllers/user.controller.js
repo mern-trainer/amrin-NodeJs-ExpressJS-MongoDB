@@ -1,5 +1,7 @@
 const { v4 } = require("uuid")
 const bcrypt = require("bcrypt")
+const jwt = require("jsonwebtoken")
+require("dotenv").config()
 
 let userList = []
 
@@ -35,9 +37,10 @@ const login = async (request, response) => {
             message: "Invalid credentials"
         })
     }
+    const jwtToken = jwt.sign({ sub: { ...user } }, process.env.JWT_SECRET, { expiresIn: "7d" }); // sub => subject
     return response.status(200).send({
         message: "Authentication success",
-        user
+        user, jwtToken
     })
 }
 
