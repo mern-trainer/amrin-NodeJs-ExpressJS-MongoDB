@@ -1,21 +1,35 @@
 const { v4 } = require("uuid")
 const bcrypt = require("bcrypt")
 const jwt = require("jsonwebtoken")
+const UserModel = require("../Models/user.model")
 require("dotenv").config()
 
 let userList = []
 
 const createUser = async (request, response) => {
-    const { body } = request
-    body.id = v4()
-    const salt = 10
-    const hashPassword = await bcrypt.hash(body.password, salt)
-    body.password = hashPassword
-    userList.push(body)
-    return response.status(201).send({
-        message: "user created",
-        body
-    })
+    try {
+        const { body } = request
+        const usernameExist = await UserModel.findOne({ username: body.username })
+        if (usernameExist) {
+            return response.status(409).send({ message: "Username already exist" });
+        }
+        const salt = 10
+        const hashPassword = await bcrypt.hash(body.password, salt)
+        body.password = hashPassword
+        const res = await UserModel.create(body)
+        if (res?._id) {
+            res.password = null
+            const token = jwt.sign({ sub: res }, process.env.JWT_SECRET, { expiresIn: "7d" }); // sub => subject
+            return response.status(201).send({ message: "user created", res, token });
+        }
+        return response.status(500).send({
+            message: "Error happend"
+        })
+    } catch (err) {
+        return response.status(500).send({
+            message: err.message.replaceAll("Path", "") || "Internal server error"
+        })
+    }
 }
 
 const login = async (request, response) => {
@@ -25,7 +39,7 @@ const login = async (request, response) => {
             message: "Username and password are required"
         })
     }
-    const user = userList.find(item => item.username.toLowerCase() == username.toLowerCase())
+    const user = await UserModel.findOne({ username });
     if (!user) {
         return response.status(404).send({
             message: "user does not exist"
@@ -37,10 +51,11 @@ const login = async (request, response) => {
             message: "Invalid credentials"
         })
     }
-    const jwtToken = jwt.sign({ sub: { ...user } }, process.env.JWT_SECRET, { expiresIn: "7d" }); // sub => subject
+    user.password = null
+    const token = jwt.sign({ sub: user }, process.env.JWT_SECRET, { expiresIn: "7d" }); // sub => subject
     return response.status(200).send({
         message: "Authentication success",
-        user, jwtToken
+        user, token
     })
 }
 

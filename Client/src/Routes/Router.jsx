@@ -1,11 +1,11 @@
 import { BrowserRouter, Routes, Route } from "react-router"
-import JwtPage from "../Pages/JwtPage"
+import SignupPage from "../Pages/SignupPage"
 
 const Router = () => {
     return <BrowserRouter>
         <Routes>
             <Route path="/">
-                <Route path="create-jwt" Component={JwtPage}/>
+                <Route path="signup" Component={SignupPage}/>
             </Route>
         </Routes>
     </BrowserRouter>
