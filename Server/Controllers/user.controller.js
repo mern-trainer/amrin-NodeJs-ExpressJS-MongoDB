@@ -112,4 +112,10 @@ const updateUser = (request, response) => {
     })
 }
 
-module.exports = { createUser, getList, deleteUser, updateUser, login }
+const getDetails = (request, response) => {
+    return response.status(200).send({
+        message: "Sample Data"
+    })
+}
+
+module.exports = { createUser, getList, deleteUser, updateUser, login, getDetails }
